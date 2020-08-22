@@ -1,24 +1,27 @@
 <template>
   <div>
-    <Comp :obj="obj" :obj2="obj" :obj3="obj" />
+    <button @click="val += 1" v-text="'Click'" />
+    <p v-for="(v, i) of iter" :key="i" v-text="v" />
   </div>
 </template>
 
 <script>
-import Comp from "./components/Component.vue";
+import { computed, ref, watch } from "vue";
+
+function* gen(val) {
+  yield val.value;
+}
 
 export default {
-  components: {
-    Comp
-  },
   setup() {
-    const obj = {
-      get [Symbol.toStringTag]() {
-        return "NotObject";
-      }
-    };
+    const val = ref(1);
+    const iter = computed(() => gen(val));
 
-    return { obj };
+    watch(val, () => {
+      console.log(iter.value);
+    });
+
+    return { val, iter };
   }
 };
 </script>
